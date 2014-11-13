@@ -9,8 +9,8 @@
 <meta name="description" content="circumscrible - HTML5 CANVAS Experiment">
 <meta name="keywords" content="canvas,3D,drawing">
 <link rel="canonical" href="http://www.dhteumeuleu.com/circumscrible">
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="img/favicon-3.ico" type="image/x-icon">
+<link rel="icon" href="img/favicon-3.ico" type="image/x-icon">
 <!--cssnav-->
 
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
@@ -42,19 +42,10 @@ body {
 	z-index: 0;
 }
 
-#clickme{
-	z-index: 2;
-/*	position: fixed;
-	top:75%;
-	left: 75%;*/
-	background-color: white;
-}
-
-
 .row{
 	background-color: white;
 }
-.container, #apiswf{
+.container, #apiswf, #clickme{
 	z-index: 2;
 }
 
@@ -65,6 +56,7 @@ body {
 	top: 75%;
 	height: 25%;
 	width: 100%;
+	margin: 0 auto;
 	background-color: black;
 	color: white;
 	overflow: scroll;
@@ -104,6 +96,24 @@ body {
 input[type="text"]{
 	width: 105px;
 	display: block;
+}
+button,select{
+	text-decoration: none;
+	border: none;
+	background-color: #4d4d4d;
+	color: white;
+}
+
+select{
+   	padding: 5px;
+   	width: 100px;
+   	border: 1px solid #4d4d4d;
+   	border-radius: 2px;
+   	-webkit-appearance: none;
+   	background: url(img/dropdown.png) no-repeat 90% #4d4d4d;
+}
+select img{
+	margin-right: 5px;
 }
 
 #audio-info,#song-title,#artist-name,#audio-controls,#pause,#next{
@@ -672,7 +682,7 @@ input[type="text"]{
 			<!-- <button id="z_drawing">Change Dimension</button> -->
 		<!-- </div> -->
 		<div class="options">
-			<button id="clickme">Click meh</button>
+			<button id="clickme">Convert to Gif</button>
 			<button id="pause_drawing">Pause Rotation</button>
 			<form action = "">
 				<!-- <fieldset> -->
