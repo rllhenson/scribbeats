@@ -70,7 +70,10 @@ body {
 	overflow: scroll;
 	display: inline-block;
 }
-#artist_name,#upbeat,#chill{
+#undo_drawing,#save_drawing,#clear_drawing,#load_drawing,#pause_drawing,#clickme{
+	display: block;
+}
+#artist_name,#upbeat,#chill,{
 	display: block;
 }
 #well,#album-art,#controls,.options,#directions,.pace,
@@ -100,10 +103,15 @@ body {
 }
 input[type="text"]{
 	width: 105px;
+	display: block;
 }
 
 #audio-info,#song-title,#artist-name,#audio-controls,#pause,#next{
 	display: block;
+}
+#art_search,#controls,#audio-footer,.pace,.options{
+	padding-left: 2.5%;
+	padding-right: 5px;
 }
 /*#pause img{
 	width: 50px;
@@ -452,35 +460,70 @@ input[type="text"]{
 		ctx = scr.ctx;
 		// ---- pointer events ----
 		pointer = new ge1doot.Pointer({	});
-		// ---- some key events ----
-		document.body.onkeydown = function (e) {
+
+		$('#pause_drawing').click(function () {
 			// ---- storage detection ----
 			var storage = typeof window.localStorage == 'object';
-			// ---- hold/release rotation [SPACE] ----
-			if (e.keyCode == 32) {
-				auto = !auto;
+			auto = !auto;
+		});
+		$('#undo_drawing').click(function () {
+			// ---- storage detection ----
+			var storage = typeof window.localStorage == 'object';
+			if (shapes.length > 0) {
+				shapes.length--;
 			}
-			// ---- clear shapes [c] ----
-			if (e.keyCode == 67) {
-				shapes.length = 0;
-			}
-			// ---- undo shapes [u] ----
-			if (e.keyCode == 85) {
-				if (shapes.length > 0) {
-					shapes.length--;
-				}
+		});
+		$('#clear_drawing').click(function () {
+			// ---- storage detection ----
+			var storage = typeof window.localStorage == 'object';
+			shapes.length = 0;
+		});
+		$('#save_drawing').click(function () {
+			// ---- storage detection ----
+			var storage = typeof window.localStorage == 'object';
+			save("circumscrible");
+		});
+		$('#load_drawing').click(function () {
+			// ---- storage detection ----
+			var storage = typeof window.localStorage == 'object';
+			load("circumscrible");
+		});
+		// $('#z_drawing').click(function () {
+		// 	// ---- storage detection ----
+		// 	var storage = typeof window.localStorage == 'object';
+		// 	if (globalZ == 0) globalZ = fov * 0.35; else globalZ = 0;
+		// });
 
-			}
-			// ---- switch global Z [Z] ----
-			if (e.keyCode == 90) {
-				if (globalZ == 0) globalZ = fov * 0.35; else globalZ = 0;
-			}
 
-			// ---- save/load [S/L]----
-			if (e.keyCode == 83 && storage) save("circumscrible");
-			if (e.keyCode == 76 && storage) load("circumscrible");
-			return false;
-		}
+		// // ---- some key events ----
+		// document.body.onkeydown = function (e) {
+		// 	// ---- storage detection ----
+		// 	var storage = typeof window.localStorage == 'object';
+		// 	// ---- hold/release rotation [SPACE] ----
+		// 	if (e.keyCode == 32) {
+		// 		auto = !auto;
+		// 	}
+		// 	// ---- clear shapes [c] ----
+		// 	if (e.keyCode == 67) {
+		// 		shapes.length = 0;
+		// 	}
+		// 	// ---- undo shapes [u] ----
+		// 	if (e.keyCode == 85) {
+		// 		if (shapes.length > 0) {
+		// 			shapes.length--;
+		// 		}
+
+		// 	}
+		// 	// ---- switch global Z [Z] ----
+		// 	if (e.keyCode == 90) {
+		// 		if (globalZ == 0) globalZ = fov * 0.35; else globalZ = 0;
+		// 	}
+
+		// 	// ---- save/load [S/L]----
+		// 	if (e.keyCode == 83 && storage) save("circumscrible");
+		// 	if (e.keyCode == 76 && storage) load("circumscrible");
+		// 	return false;
+		// }
 		// ---- intro drawing ----
 		build(json);
 		// ---- engine start ----
@@ -619,17 +662,21 @@ input[type="text"]{
 	        </noscript>
 	    </div>
 
-		<div id="directions">
-			<button id="clickme" >Click meh</button>
-			<p>Space to pause</p>
-			<p>Z to change dimension</p>
-			<p>S to save</p>
-			<p>To make a gif of your drawing, click 'press meh'.</p>
-		</div>
+<!-- 		<div id="directions">
+			<button id="clickme">Click meh</button>
+			<button id="pause_drawing">Pause Rotation</button>
+			<button id="undo_drawing">Undo Line</button>
+			<button id="clear_drawing">Clear All</button>
+			<button id="save_drawing">Save Drawing</button>
+			<button id="load_drawing">Load Drawing</button> -->
+			<!-- <button id="z_drawing">Change Dimension</button> -->
+		<!-- </div> -->
 		<div class="options">
+			<button id="clickme">Click meh</button>
+			<button id="pause_drawing">Pause Rotation</button>
 			<form action = "">
 				<!-- <fieldset> -->
-		  		<p>Change Line Color</p>
+		  		<p>Line Color</p>
 		  		<select id = "selColor">
 		   			<option value = "#FFFFFF">White</option>
 		   			<option value = "#FF0000">Red</option>
@@ -644,9 +691,11 @@ input[type="text"]{
 		  	</form>
 		</div>
 
-		<div class="options">  	
+		<div class="options">  
+			<button id="undo_drawing">Undo Line</button>
+			<button id="clear_drawing">Clear All</button>	
 		  	<form action = "">
-		  		<p>Change Fill Color</p>
+		  		<p>Fill Color</p>
 		  		<select id = "filColor">
 		   			<option value = "#FFFFFF">White</option>
 		   			<option value = "#FF0000">Red</option>
@@ -656,14 +705,16 @@ input[type="text"]{
 		   			<option value = "#0000FF">Blue</option>
 		   			<option value = "#663366">Indigo</option>
 		   			<option value = "#FF00FF">Violet</option>
-		   			<option value = "1">Seizure</option>
+		   			<option value = "1" selected>Random</option>
 		  		</select>
 		  	</form>
 		</div>
 
 		<div class="options">
+			<button id="save_drawing">Save Drawing</button>
+			<button id="load_drawing">Load Drawing</button>
 		  	<form action = "">
-		  		<p>Change Line Thickness</p>
+		  		<p>Line Thickness</p>
 		  		<select id = "selLine">
 		   			<option value = "1">Ultra Thin</option>
 		   			<option value = "5">Thin</option>
