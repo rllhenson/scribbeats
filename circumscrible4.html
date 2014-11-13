@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="Author" content="Gerard Ferrandez at http://www.dhteumeuleu.com/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="HandheldFriendly" content="true">
+<meta name="description" content="circumscrible - HTML5 CANVAS Experiment">
+<meta name="keywords" content="canvas,3D,drawing">
+<link rel="canonical" href="http://www.dhteumeuleu.com/circumscrible">
+<!--cssnav-->
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript"> google.load("jquery", "1.4.2"); </script>
+<script type="text/javascript"> google.load("jqueryui", "1.8.6"); </script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+<!-- <link type="text/css" href="css/bpradio.css" rel="stylesheet" /> -->
+
+<title>circumscrible - HTML5 3D CANVAS drawing</title>
+<style>
+html {
+	overflow: hidden;
+	-ms-touch-action: none;
+	-ms-content-zooming: none;
+}
+body {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	background: #000;
+	width: 100%;
+	height: 100%;
+}
+#screen {
+	position: absolute;
+	width: 80%;
+	height: 100%;
+	cursor: pointer;
+	z-index: 0;
+	float: left;
+}
+
+#clickme{
+	z-index: 1;
+	position: fixed;
+	top:75%;
+	left: 75%;
+	background-color: white;
+}
+
+.container{
+	float: left;
+	width: 10%;
+	overflow: scroll;
+	height: 500px;
+}
+.row{
+	background-color: white;
+}
+.container, #apiswf{
+	z-index: 2;
+}
+.container img{
+	width: 100%;
+}
+.containerr{
+	float: right;
+	width: 10%;
+	overflow: scroll;
+	height: 700px;
+}
+
+
+</style>
+
+<script src="js/ge1doot.js"></script>
+<script type="text/javascript" src="js/LZWEncoder.js"></script> 
+<script type="text/javascript" src="js/NeuQuant.js"></script> 
+<script type="text/javascript" src="js/GIFEncoder.js"></script> 
+<script type="text/javascript" src="js/b64.js"></script> 
+<script type="text/javascript" src="js/makeGif.js"></script> 
+<script src="js/jquery-1.5.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+<!-- <script src="js/token.js"></script>
+<script src="js/hello.js"></script> -->
+
+
+<script>
+/* =======================================================
+ *  ---- HTML5 CANVAS 3D drawing ----
+ * script: Gerard Ferrandez - 7 February 2013
+ * Released under the MIT license
+ * http://www.dhteumeuleu.com/LICENSE.html
+ * ======================================================= */
+ 
+"use strict";
+
+(function () {
+	// ==== private variables =====
+	var scr, ctx, pointer;
+	var shapes = [];
+	var sparks = [];
+	var sparkId = 0;
+	var fov = 650;
+	var globalZ = 0;
+	var xm = 0;
+	var ym = 0;
+	var auto = true;
+	var currentShape;
+	var start = true;
+	// ==== spark object ====
+	var Spark = function (x, y) {
+		this.x = x;
+		this.y = y;
+		this.sx = Math.random() - 0.5;
+		this.sy = 5 + Math.random() * 10;
+	}
+	// ==== draw sparks ====
+	Spark.prototype.draw = function () {
+		if (this.y < scr.height) {
+			this.x += this.sx;
+			this.y += this.sy;
+			ctx.moveTo(this.x, this.y - 2);
+			ctx.lineTo(this.x, this.y);
+		}
+	}
+	// ==== shape object ====
+	var Shape = function () {
+		this.points = [];
+		this.length = 0;
+		this.filled = false;
+		this.color = "";
+		this.angle = 0;
+		this.fov = fov;
+		return this;
+	}
+	// ==== add point ====
+	Shape.prototype.addPoint = function (x, y, z) {
+		this.points.push(
+			new Point(Math.round(x), Math.round(y), Math.round(z))
+		);
+		this.length++;
+		if (Math.random() > 0.5) {
+			sparks[sparkId++] = new Spark(x + scr.width * 0.5, y + scr.height * 0.5);
+			if (sparkId == 100) sparkId = 0;
+		}
+	}
+	// ==== rotate shape ====
+	Shape.prototype.rotate = function () {
+		// ---- increment angle ----
+		this.angle += Math.PI / 180;
+		var ax = Math.cos(this.angle);
+		var ay = Math.sin(this.angle);
+		// ---- points rotation ----
+		for (var i = 0; i < this.length; i++) {
+			this.points[i].rotate(ax, ay);
+		}
+	}
+	// ==== draw shape ====
+	Shape.prototype.draw = function () {
+		var selColor = document.getElementById("selColor");
+		var datColor;
+		if (selColor.value==1){
+			datColor='hsl(' + Math.round(Math.random() * 360) + ', 90%, 60%)';
+		}
+	  	else { datColor = selColor.value; }
+		// ---- 3D to 2D points projection ----
+		for (var i = 0; i < this.length; i++) {
+			this.points[i].project(this.fov);
+		}
+		// ---- draw smooth curve through N points ----
+		var p0 = this.points[0];
+		var lf = scr.width * 0.5;
+		var tp = scr.height * 0.5;
+		ctx.beginPath();
+		ctx.moveTo(Math.random() * 3 - 1.5 + p0.xp + lf, Math.random() * 3 - 1.5 + p0.yp + tp);
+		for (var i = 1, l = this.points.length; i < l; i++) {
+			var p1 = this.points[i];
+			var xc = Math.random() * 3 - 1.5 + (p0.xp + p1.xp) / 2;
+			var yc = Math.random() * 3 - 1.5 + (p0.yp + p1.yp) / 2;
+			ctx.quadraticCurveTo(p0.xp + lf, p0.yp + tp, xc + lf, yc + tp);
+			p0 = p1;
+		}
+		ctx.strokeStyle=datColor;
+		// ---- paint ----
+		// originally white
+		// ctx.strokeStyle = "#fff";
+
+		// as of yet does nothing
+		// $('#linecolor').click(function(){
+		// 	ctx.strokeStyle = 'hsl(' + Math.round(Math.random() * 360) + ', 90%, 60%)';
+		// });
+		
+		// crazy technicolor
+		// ctx.strokeStyle = 'hsl(' + Math.round(Math.random() * 360) + ', 90%, 60%)';
+
+		// edits thickness of the line
+		ctx.lineWidth = 10;
+		//orig. round
+		ctx.lineCap = "round";
+		ctx.lineJoin = "round";
+		if (this.filled) {
+			ctx.closePath();
+			ctx.fillStyle = this.color;
+			ctx.fill();
+		}
+		ctx.stroke();
+	}
+	// ==== point object ====
+	var Point = function (x, y, z) {
+		this.x  = x;
+		this.y  = y;
+		this.z  = z;
+		this.x0 = x;
+		this.z0 = z;
+		this.xp = 0;
+		this.yp = 0;
+		this.zp = 0;
+	}
+	// ==== 3D to 2D point projection ====
+	Point.prototype.project = function (sfov) {
+		this.zp = sfov / (sfov + this.z);
+		this.xp = this.x * this.zp;
+		this.yp = this.y * this.zp;
+	}
+	// ==== rotate point ====
+	Point.prototype.rotate = function (ax, ay) {
+		this.x = Math.round(this.x0 *  ax + this.z0 * ay);
+		this.z = Math.round(this.x0 * -ay + this.z0 * ax);
+	}
+	// ==== painting pointer ====
+	var movePointer = function () {
+		if (pointer.isDown) {
+			var dx = xm - pointer.X;
+			var dy = ym - pointer.Y;
+			var d = Math.sqrt(dx * dx + dy * dy);
+			if (d > 10) {
+				if (!currentShape) {
+					if (start) {
+						start = false;
+						shapes.length = 0;
+					}
+					shapes.push(
+						currentShape = new Shape()
+					);
+				}
+				var z = fov / (fov + globalZ);
+				currentShape.addPoint(
+					(pointer.X - scr.width  * 0.5) / z, 
+					(pointer.Y - scr.height * 0.5) / z, 
+					globalZ
+				);
+				xm = pointer.X;
+				ym = pointer.Y;
+				// ---- closing shape ----
+				currentShape.filled = false;
+				currentShape.color = "";
+				var first = currentShape.points[0];
+				var last  = currentShape.points[currentShape.length - 1];
+				var dx = last.x - first.x;
+				var dy = last.y - first.y;
+				var dz = last.z - first.z;
+				var d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+				if (d < 15) {
+					if (currentShape.length > 4) {
+						//this randomizes color as the shape closes
+						// currentShape.color = 'hsla(' + Math.round(Math.random() * 360) + ', 90%, 60%, 0.2)';
+						// made fill green only
+						currentShape.color = 'hsla(120,100%,50%,0.3)';
+						currentShape.filled = true;
+					}
+				}
+			}
+		} else {
+			// ---- up ----
+			if (currentShape) {
+				currentShape = false;
+			}
+			// ---- rotate ----
+			if (auto) {
+				var i = 0, s;
+				while ( s = shapes[i++]) s.rotate();
+			}
+		}
+	}
+	// ==== save drawing ====
+	var save = function (id) {
+		// ---- clean up ----
+		var array = shapes.slice(0);
+		for (var i = 0; i < array.length; i++) {
+			delete array[i].angle;
+			var pts = array[i].points;
+			for (var j = 0; j < pts.length; j++) {
+				var p = pts[j];
+				for (var k in p) {
+					if (k.length != 1) delete p[k];
+				}
+			}
+		}
+		// ---- save json to local storage ----
+		var a = JSON.stringify(array);
+		window.localStorage.setItem(id, a);
+		// ---- re-load ----
+		load(id);
+	}
+	// ==== load drawing ====
+	var load = function (id) {
+		// ---- clear all ----
+		shapes.length = 0;
+		// ---- load ----
+		var array = JSON.parse(window.localStorage.getItem(id));
+		// ---- rebuild objects ----
+		build(array);
+	}
+	// ==== inject data ====
+	var build = function(array) {
+		if (array) {
+			for (var i = 0; i < array.length; i++) {
+				shapes.push(
+					currentShape = new Shape()
+				);
+				var p = array[i].points;
+				for (var j = 0; j < p.length; j++) {
+					currentShape.points.push(
+						new Point(p[j].x, p[j].y, p[j].z)
+					);
+				}
+				currentShape.length = array[i].length;
+				currentShape.filled = array[i].filled;
+				currentShape.color  = array[i].color;
+			}
+		}
+	}
+	// ==== init script ====
+	var init = function (json) {
+		// ---- screen ----
+		scr = new ge1doot.Screen({
+			container: "screen",
+			resize: function () {
+				fov = Math.round(scr.width * 0.5);
+			}
+		});
+		scr.resize();
+		ctx = scr.ctx;
+		// ---- pointer events ----
+		pointer = new ge1doot.Pointer({	});
+		// ---- some key events ----
+		document.body.onkeydown = function (e) {
+			// ---- storage detection ----
+			var storage = typeof window.localStorage == 'object';
+			// ---- hold/release rotation [SPACE] ----
+			if (e.keyCode == 32) {
+				auto = !auto;
+			}
+			// ---- clear shapes [c] ----
+			if (e.keyCode == 67) {
+				shapes.length = 0;
+			}
+			// ---- undo shapes [u] ----
+			if (e.keyCode == 85) {
+				if (shapes.length > 0) {
+					shapes.length--;
+				}
+
+			}
+			// ---- switch global Z [Z] ----
+			if (e.keyCode == 90) {
+				if (globalZ == 0) globalZ = fov * 0.35; else globalZ = 0;
+			}
+
+			// ---- save/load [S/L]----
+			if (e.keyCode == 83 && storage) save("circumscrible");
+			if (e.keyCode == 76 && storage) load("circumscrible");
+			return false;
+		}
+		// ---- intro drawing ----
+		build(json);
+		// ---- engine start ----
+		run();
+	}
+	// ======== main loop ========
+	var run = function () {
+		ctx.clearRect(0, 0, scr.width, scr.height);
+		movePointer();
+		// ---- draw shapes ----
+		var i = 0, s;
+		while ( s = shapes[i++]) {
+			s.draw();
+		}
+		// ---- sparks ----
+		ctx.beginPath();
+		var i = 0, s;
+		while ( s = sparks[i++]) {
+			s.draw();
+		}
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "#fff";
+		ctx.stroke();
+		// ---- animation loop ----
+		requestAnimFrame(run);
+	}
+	return {
+		// ---- onload event ----
+		load : function (json) {
+			window.addEventListener('load', function () {
+				init(json);
+			}, false);
+		}
+	}
+
+
+})
+
+().load(
+	//=============================
+	//IDEAS
+	// ============================
+
+	// lots of different buttons, choose by color and choose fill color, random button, or even text field
+	// currentShape.color =('$textfieldid').value(); that sort of thing. THis might even work with song stuff
+	// also, check ge1doot.js for the canvas taking the screen width and determining size that way, change there?
+
+
+	// What happens when we change the color here?
+	// this is draw
+	[
+	// {"points":[{"x":0,"y":-20,"z":-20},{"x":0,"y":10,"z":-20},{"x":-10,"y":20,"z":-30},{"x":-28,"y":20,"z":-40},{"x":-40,"y":10,"z":-50},{"x":-40,"y":-20,"z":-50},{"x":-28,"y":-30,"z":-40},{"x":-10,"y":-30,"z":-30},{"x":0,"y":-20,"z":-20}],"length":9,"filled":false,"color":"","fov":506},
+
+	{"points":[
+
+	{"x":0,"y":-20,"z":-20},
+	{"x":-10,"y":-30,"z":-30},
+	{"x":-28,"y":-30,"z":-40},
+	{"x":-40,"y":-20,"z":-50},
+	{"x":-40,"y":10,"z":-50},
+	{"x":-28,"y":20,"z":-40},
+	{"x":-10,"y":20,"z":-30},
+	{"x":0,"y":10,"z":-20},
+	{"x":0,"y":-20,"z":-20},
+
+	{"x":20,"y":-120,"z":-10},
+	{"x":20,"y":-120,"z":-10},
+	{"x":110,"y":-140,"z":80},
+	{"x":110,"y":-140,"z":80},
+
+	{"x":90,"y":-20,"z":70},
+	{"x":90,"y":10,"z":70},
+	{"x":78,"y":20,"z":60},
+	{"x":60,"y":20,"z":50},
+	{"x":50,"y":10,"z":40},
+	{"x":50,"y":-20,"z":40},
+	{"x":60,"y":-30,"z":50},
+	{"x":78,"y":-30,"z":60},
+	{"x":90,"y":-20,"z":70},
+	{"x":90,"y":10,"z":70}
+
+
+
+	],"length":23,"filled":false,"color":"","fov":506}
+	
+	]
+	);
+</script>
+<script>
+	// ctx = this.elem.tagName == "CANVAS" ? this.elem.getContext("2d") : false;
+	// $(document).ready(function(){
+	// 	var ctx = document.getElementByID('screen');
+	// 	ctx.getContext('2d');
+	// 	$('#linecolor').click(function(){
+	// 		ctx.strokeStyle = 'hsl(' + Math.round(Math.random() * 360) + ', 90%, 60%)';
+	// 	});
+	// });
+</script>
+    <script>
+      // var canvas = document.getElementById('screen');
+      // var context = canvas.getContext('2d');
+
+
+      // // bind event handler to clear button
+      // document.getElementById('clear').addEventListener('click', function() {
+      //   context.clearRect(0, 0, canvas.width, canvas.height);
+      // }, false);
+
+    </script>
+</head>
+<body>
+
+
+<div class="container">
+    <div id="apiswf"></div>
+    <div id="song-table"></div>
+
+	<div class="well" style="overflow: hidden;">
+
+		<input title="Enter an artist name" type="text"  id="artist_name" class="tip" onclick="searchClicked()" onkeydown="if (event.keyCode == 13) newArtist()" name="artist" value='Enter artist name'/>
+
+		<!-- <div id="player"> -->
+
+		    <div id="album-art" title="visit this album at Rdio"> 
+		        <img width="200px" height="200px" alt="masks" src="img/mask2.jpeg"/> 
+		    </div>
+		    <div id="controls">
+		        <div id="audio-info">
+		            <div class="limited-label" title="visit this song at Rdio" id="song-title"> </div>
+		            <div class="limited-label" title="visit this artist at Rdio" id="artist-name"> </div>
+		        </div>
+		        <div id="audio-controls">
+		            <a title="pause/play the music" id="pause" class="button tip">pause</a>
+		            <a title="advance to the next track"  id="next" class="button tip">next</a>
+		        </div>
+		        <div id="audio-footer">
+		            <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
+		            <a class="tip" title="mutes/unmutes the music" id="mute"> <img alt="mute" id="mute_img" src="img/Sound_Button.png"/></a>
+		        </div>
+		    </div>
+
+		<!-- </div> -->
+        <img class="mbutton" id="chill" width="200px" height="200px" src="img/normal.png" title="immediately plays a chill out song by the current artist">
+        <img class="mbutton" id="upbeat" width="200px" height="200px" src="img/happy.png" title="plays a high energy song by the current artist">
+		<div id="log">
+	        <noscript> Sorry! The Bipolar Radio needs JavaScript, but that is not
+	                   enabled in your browser.
+	        </noscript>
+	    </div>
+
+	</div>
+</div>
+
+<div class="offright">
+	<canvas id="screen">HTML5 CANVAS 3D Drawing demo</canvas>
+	<button id="clickme" >Click meh</button>
+</div>
+
+<div class="containerr">
+	<div class="row">
+		<p>Space to pause</p>
+		<p>Z to change dimension</p>
+		<p>S to save</p>
+		<p>To make a gif of your drawing, click 'press meh'.</p>
+		<form action = "">
+			<fieldset>
+		  		<select id = "selColor">
+		   			<option value = "#FFFFFF">White</option>
+		   			<option value = "#FF0000">Red</option>
+		   			<option value = "#FFCC00">Orange</option>
+		   			<option value = "#FFFF00">Yellow</option>
+		   			<option value = "#00FF00">Green</option>
+		   			<option value = "#0000FF">Blue</option>
+		   			<option value = "#663366">Indigo</option>
+		   			<option value = "#FF00FF">Violet</option>
+		   			<option value = "1">Seizure</option>
+		  		</select>
+		  	</fieldset>
+		</form>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-3675615-22']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+var ga = document.createElement('script'); ga.type =
+'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' :
+'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(ga, s);
+})();
+
+</script>
+<script language="javascript" type="text/javascript" src="js/jquery-ui.min.js"></script>
+<script language="javascript" type="text/javascript" src="js/bpradio.js"></script>
+<script language="javascript" type="text/javascript" src="js/rdio.js"></script>
+
+
+</body>
+</html>
