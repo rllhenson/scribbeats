@@ -9,6 +9,8 @@
 <meta name="description" content="circumscrible - HTML5 CANVAS Experiment">
 <meta name="keywords" content="canvas,3D,drawing">
 <link rel="canonical" href="http://www.dhteumeuleu.com/circumscrible">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
 <!--cssnav-->
 
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
@@ -68,17 +70,41 @@ body {
 	overflow: scroll;
 	display: inline-block;
 }
-#artist_name{
+#artist_name,#upbeat,#chill{
 	display: block;
 }
-#well,#album-art,#controls,#options,#directions,#upbeat,#chill,#audio-info,#audio-controls,#audio-footer,#art_search, #log{
+#well,#album-art,#controls,.options,#directions,.pace,
+/*#upbeat,#chill,*/
+/*#audio-info,#audio-controls,*/
+#audio-footer,#track-time,#mute,#art_search, #log{
 	display: inline-block;
 
 }
-#upbeat,#chill,.container img{
-	height: 100px;
+#pause img,#next img{
+	height: 40px;
+	width: 40px;
+}
+#mute img{
+	height: 40px;
+	width: 40px;
+}
+.pace{
+	text-align: center;
+}
+#upbeat,#chill{
+	height: 111px;
+}
+.container img{
+	height: 111px;
+	width: 111px
+}
+input[type="text"]{
+	width: 105px;
 }
 
+#audio-info,#song-title,#artist-name,#audio-controls,#pause,#next{
+	display: block;
+}
 /*#pause img{
 	width: 50px;
 	height: 50px;
@@ -304,6 +330,13 @@ body {
 	}
 	// ==== painting pointer ====
 	var movePointer = function () {
+		var selColor = document.getElementById("filColor");
+		var datColor;
+		if (selColor.value==1){
+			datColor='hsl(' + Math.round(Math.random() * 360) + ', 90%, 60%)';
+		}
+	  	else { datColor = selColor.value; }
+
 		if (pointer.isDown) {
 			var dx = xm - pointer.X;
 			var dy = ym - pointer.Y;
@@ -340,7 +373,8 @@ body {
 						//this randomizes color as the shape closes
 						// currentShape.color = 'hsla(' + Math.round(Math.random() * 360) + ', 90%, 60%, 0.2)';
 						// made fill green only
-						currentShape.color = 'hsla(120,100%,50%,0.3)';
+						// currentShape.color = 'hsla(120,100%,50%,0.3)';
+						currentShape.color = datColor;
 						currentShape.filled = true;
 					}
 				}
@@ -550,10 +584,6 @@ body {
 	    </div>
 
 	    <div id="controls">
-	        <div id="audio-info">
-	            <div class="limited-label" title="visit this song at Rdio" id="song-title"> </div>
-	            <div class="limited-label" title="visit this artist at Rdio" id="artist-name"> </div>
-	        </div>
 	        <div id="audio-controls">
 	            <a title="pause/play the music" id="pause" class="button tip">
 	            	<img src="img/play.png" alt="play music">
@@ -561,15 +591,27 @@ body {
 	            <a title="advance to the next track"  id="next" class="button tip">
 	            	<img src="img/skip.png" alt="play music">
 	            </a>
-	        </div>
-	        <div id="audio-footer">
-	            <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
-	            <a class="tip" title="mutes/unmutes the music" id="mute"> <img alt="mute" id="mute_img" src="img/sound.png"/></a>
+	            <a class="tip" title="mutes/unmutes the music" id="mute"> 
+	            	<img alt="mute" id="mute_img" src="img/sound.png"/>
+	            </a>
 	        </div>
 	    </div>
+    	<div id="audio-footer">
+        	<div id="audio-info">
+	            <div class="limited-label" title="visit this song at Rdio" id="song-title"> </div>
+	            <div class="limited-label" title="visit this artist at Rdio" id="artist-name"> </div>
+	        </div>
+            <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
+        </div>
 
-        <img class="mbutton" id="chill" src="img/chill.png" title="immediately plays a chill out song by the current artist">
-        <img class="mbutton" id="upbeat" src="img/upbeat.png" title="plays a high energy song by the current artist">
+        <div class="pace">
+	        <img class="mbutton" id="chill" src="img/chill.png" title="immediately plays a chill out song by the current artist">
+	        <p>chillaxed</p>
+	    </div>
+	    <div class="pace">
+	        <img class="mbutton" id="upbeat" src="img/upbeat.png" title="plays a high energy song by the current artist">
+	        <p>upbeat</p>
+	    </div>
 
         <div id="log">
 	        <noscript> Sorry! The Bipolar Radio needs JavaScript, but that is not
@@ -584,7 +626,7 @@ body {
 			<p>S to save</p>
 			<p>To make a gif of your drawing, click 'press meh'.</p>
 		</div>
-		<div id="options">
+		<div class="options">
 			<form action = "">
 				<!-- <fieldset> -->
 		  		<p>Change Line Color</p>
@@ -599,14 +641,29 @@ body {
 		   			<option value = "#FF00FF">Violet</option>
 		   			<option value = "1">Seizure</option>
 		  		</select>
+		  	</form>
+		</div>
 
+		<div class="options">  	
+		  	<form action = "">
 		  		<p>Change Fill Color</p>
+		  		<select id = "filColor">
+		   			<option value = "#FFFFFF">White</option>
+		   			<option value = "#FF0000">Red</option>
+		   			<option value = "#FFCC00">Orange</option>
+		   			<option value = "#FFFF00">Yellow</option>
+		   			<option value = "#00FF00">Green</option>
+		   			<option value = "#0000FF">Blue</option>
+		   			<option value = "#663366">Indigo</option>
+		   			<option value = "#FF00FF">Violet</option>
+		   			<option value = "1">Seizure</option>
+		  		</select>
+		  	</form>
+		</div>
 
+		<div class="options">
+		  	<form action = "">
 		  		<p>Change Line Thickness</p>
-		<!-- 		  		<button type="button" id="thinner">-</button>
-		  		<button type="button" id="reset">Reset</button>
-		  		<button type="button" id="thicker">+</button> -->
-
 		  		<select id = "selLine">
 		   			<option value = "1">Ultra Thin</option>
 		   			<option value = "5">Thin</option>
@@ -614,8 +671,6 @@ body {
 		   			<option value = "15">Thick</option>
 		   			<option value = "20">Dude</option>
 		  		</select>
-
-			  	<!-- </fieldset> -->
 			</form>
 		</div>
 	</div>

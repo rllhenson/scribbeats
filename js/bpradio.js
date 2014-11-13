@@ -316,10 +316,10 @@ function togglePauseResume(event) {
 function setPlaying(playing) {
     if (playing) {
         paused = false;
-       $('#pause').css("background-image", "url(img/pause.png)");
+       $('#pause img').attr('src', 'img/pause.png');
     } else {
         paused = true;
-       $('#pause').css("background-image", "url(img/play.png)");
+       $('#pause img').attr('src', 'img/play.png');
     }
 }
 
