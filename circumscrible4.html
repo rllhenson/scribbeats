@@ -35,7 +35,7 @@ body {
 #screen {
 	position: absolute;
 	width: 100%;
-	height: 50%;
+	height: 75%;
 	cursor: pointer;
 	z-index: 0;
 }
@@ -55,26 +55,73 @@ body {
 .container, #apiswf{
 	z-index: 2;
 }
-.container img{
-/*	width: 100%;*/
-}
+
 
 
 .container{
 	position: absolute;
-	top: 50%;
-	height: 50%;
-	width: 50%;
+	top: 75%;
+	height: 25%;
+	width: 100%;
+	background-color: black;
+	color: white;
 	overflow: scroll;
+	display: inline-block;
 }
-.containerr{
+#artist_name{
+	display: block;
+}
+#well,#album-art,#controls,#options,#directions,#upbeat,#chill,#audio-info,#audio-controls,#audio-footer,#art_search, #log{
+	display: inline-block;
+
+}
+#upbeat,#chill,.container img{
+	height: 100px;
+}
+
+/*#pause img{
+	width: 50px;
+	height: 50px;
+}*/
+
+/*	            <a title="advance to the next track"  id="next" class="button tip">next</a>
+	        </div>
+	        <div id="audio-footer">
+	            <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
+	            <a class="tip" title="mutes/unmutes the music" id="mute"> <img alt="mute" id="mute_img" src="img/Sound_Button.png"/></a>
+	        </div>
+	    </div>
+
+        <img class="mbutton" id="chill" src="img/normal.png" title="immediately plays a chill out song by the current artist">
+        <img class="mbutton" id="upbeat" src="img/happy.png" title="plays a high energy song by the current artist">
+
+
+#home {
+    left: 0px;
+    width: 46px;
+    background: url('img_navsprites.gif') 0 0;
+}
+
+#prev {
+    left: 63px;
+    width: 43px;
+    background: url('img_navsprites.gif') -47px 0;
+}
+
+#next {
+    left: 129px;
+    width: 43px;
+    background: url('img_navsprites.gif') -91px 0;
+}*/
+
+/*.containerr{
 	position: absolute;
 	top:50%;
 	left: 50%;
 	width: 50%;
 	height: 50%;
 	overflow: scroll;
-}
+}*/
 
 
 
@@ -492,51 +539,54 @@ body {
     <div id="apiswf"></div>
     <div id="song-table"></div>
 
-	<div class="well" style="overflow: hidden;">
+	<div class="well">
 
-		<input title="Enter an artist name" type="text"  id="artist_name" class="tip" onclick="searchClicked()" onkeydown="if (event.keyCode == 13) newArtist()" name="artist" value='Enter artist name'/>
-
-		<!-- <div id="player"> -->
+		<div id="art_search">
+			<input title="Enter an artist name" type="text"  id="artist_name" class="tip" onclick="searchClicked()" onkeydown="if (event.keyCode == 13) newArtist()" name="artist" value='Enter artist name'/>
 
 		    <div id="album-art" title="visit this album at Rdio"> 
-		        <img width="200px" height="200px" alt="masks" src="img/mask2.jpeg"/> 
+		        <img width="200px" height="200px" alt="masks" src="img/scribbeats.png"/> 
 		    </div>
-		    <div id="controls">
-		        <div id="audio-info">
-		            <div class="limited-label" title="visit this song at Rdio" id="song-title"> </div>
-		            <div class="limited-label" title="visit this artist at Rdio" id="artist-name"> </div>
-		        </div>
-		        <div id="audio-controls">
-		            <a title="pause/play the music" id="pause" class="button tip">pause</a>
-		            <a title="advance to the next track"  id="next" class="button tip">next</a>
-		        </div>
-		        <div id="audio-footer">
-		            <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
-		            <a class="tip" title="mutes/unmutes the music" id="mute"> <img alt="mute" id="mute_img" src="img/Sound_Button.png"/></a>
-		        </div>
-		    </div>
+	    </div>
 
-		<!-- </div> -->
-        <img class="mbutton" id="chill" width="200px" height="200px" src="img/normal.png" title="immediately plays a chill out song by the current artist">
-        <img class="mbutton" id="upbeat" width="200px" height="200px" src="img/happy.png" title="plays a high energy song by the current artist">
-		<div id="log">
+	    <div id="controls">
+	        <div id="audio-info">
+	            <div class="limited-label" title="visit this song at Rdio" id="song-title"> </div>
+	            <div class="limited-label" title="visit this artist at Rdio" id="artist-name"> </div>
+	        </div>
+	        <div id="audio-controls">
+	            <a title="pause/play the music" id="pause" class="button tip">
+	            	<img src="img/play.png" alt="play music">
+	            </a>
+	            <a title="advance to the next track"  id="next" class="button tip">
+	            	<img src="img/skip.png" alt="play music">
+	            </a>
+	        </div>
+	        <div id="audio-footer">
+	            <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
+	            <a class="tip" title="mutes/unmutes the music" id="mute"> <img alt="mute" id="mute_img" src="img/sound.png"/></a>
+	        </div>
+	    </div>
+
+        <img class="mbutton" id="chill" src="img/chill.png" title="immediately plays a chill out song by the current artist">
+        <img class="mbutton" id="upbeat" src="img/upbeat.png" title="plays a high energy song by the current artist">
+
+        <div id="log">
 	        <noscript> Sorry! The Bipolar Radio needs JavaScript, but that is not
 	                   enabled in your browser.
 	        </noscript>
 	    </div>
 
-	</div>
-</div>
-
-<div class="containerr">
-	<div class="row">
-		<button id="clickme" >Click meh</button>
-		<p>Space to pause</p>
-		<p>Z to change dimension</p>
-		<p>S to save</p>
-		<p>To make a gif of your drawing, click 'press meh'.</p>
-		<form action = "">
-			<fieldset>
+		<div id="directions">
+			<button id="clickme" >Click meh</button>
+			<p>Space to pause</p>
+			<p>Z to change dimension</p>
+			<p>S to save</p>
+			<p>To make a gif of your drawing, click 'press meh'.</p>
+		</div>
+		<div id="options">
+			<form action = "">
+				<!-- <fieldset> -->
 		  		<p>Change Line Color</p>
 		  		<select id = "selColor">
 		   			<option value = "#FFFFFF">White</option>
@@ -553,7 +603,7 @@ body {
 		  		<p>Change Fill Color</p>
 
 		  		<p>Change Line Thickness</p>
-<!-- 		  		<button type="button" id="thinner">-</button>
+		<!-- 		  		<button type="button" id="thinner">-</button>
 		  		<button type="button" id="reset">Reset</button>
 		  		<button type="button" id="thicker">+</button> -->
 
@@ -565,8 +615,9 @@ body {
 		   			<option value = "20">Dude</option>
 		  		</select>
 
-		  	</fieldset>
-		</form>
+			  	<!-- </fieldset> -->
+			</form>
+		</div>
 	</div>
 </div>
 

@@ -296,10 +296,10 @@ function PC(val) {
 function toggleMute() {
     if (isMuted()) {
         audioUnMute();
-        $("#mute_img").attr('src', 'img/Sound_Button.png');
+        $("#mute_img").attr('src', 'img/sound.png');
     }  else {
         audioMute();
-        $("#mute_img").attr('src', 'img/Mute_Button.png');
+        $("#mute_img").attr('src', 'img/mute.png');
     }
     return false;
 }
@@ -316,10 +316,10 @@ function togglePauseResume(event) {
 function setPlaying(playing) {
     if (playing) {
         paused = false;
-       $('#pause').css("background-image", "url(img/Pause_StackedButton2.png)");
+       $('#pause').css("background-image", "url(img/pause.png)");
     } else {
         paused = true;
-       $('#pause').css("background-image", "url(img/Play_StackedButton2.png)");
+       $('#pause').css("background-image", "url(img/play.png)");
     }
 }
 
@@ -328,7 +328,7 @@ function isPaused() {
 }
 
 function isMuted() {
-    return $("#mute_img").attr('src') === 'img/Mute_Button.png';
+    return $("#mute_img").attr('src') === 'img/mute.png';
 }
 
 
