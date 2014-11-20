@@ -31,8 +31,8 @@ body {
 
 
 .container{
-	position: absolute;
-	top: 75%;
+/*	position: absolute;
+	top: 75%;*/
 	height: 25%;
 	width: 100%;
 	margin: 0 auto;
@@ -42,15 +42,15 @@ body {
 	display: inline-block;
 }
 #undo_drawing,#save_drawing,#clear_drawing,#load_drawing,#pause_drawing,#clickme{
-	display: block;
+	display: inline-block;
 }
-#artist_name,#upbeat,#chill,{
-	display: block;
+#upbeat,#chill,{
+	display: inline-block;
 }
-#well,#album-art,#controls,.options,#directions,.pace,
+#header,#album-art,, #album-art img,#controls,.options,.options button,#directions,.pace,
 /*#upbeat,#chill,*/
 /*#audio-info,#audio-controls,*/
-#audio-footer,#track-time,#mute,#art_search, #log{
+#audio-footer,#track-time,#mute,#art_search, #log,#audio-info,#artist_name, #searchartist{
 	display: inline-block;
 
 }
@@ -68,7 +68,7 @@ body {
 #upbeat,#chill{
 	height: 111px;
 }
-.container img{
+#art-search img{
 	height: 111px;
 	width: 111px
 }
@@ -89,17 +89,36 @@ select{
    	border: 1px solid #4d4d4d;
    	border-radius: 2px;
    	-webkit-appearance: none;
-   	background: url(img/dropdown.png) no-repeat 90% #4d4d4d;
+   	background: url(../img/dropdown.png) no-repeat 90% #4d4d4d;
 }
 select img{
 	margin-right: 5px;
 }
 
-#audio-info,#song-title,#artist-name,#audio-controls,#pause,#next{
+#song-title,#artist-name{
 	display: block;
 }
-#art_search,#controls,#audio-footer,.pace,.options{
+#audio-controls,#pause,#next,#mute{
+	display: inline-block;
+}
+#art_search,#controls,.pace,.options{
 	padding-left: 2.5%;
 	padding-right: 5px;
 }
 
+#header, #header img, #artist_name, .tip{
+	display: inline-block;
+}
+#audio-footer{
+	position: fixed;
+	top: 70%;
+	left: 72.5%;
+}
+#log{
+	position: fixed;
+	top: 70%;
+	left: 2.5%;
+}
+#header button{
+	display: inline-block;
+}

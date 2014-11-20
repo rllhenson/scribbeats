@@ -20,7 +20,7 @@
 <link type="text/css" href="css/reset.css" rel="stylesheet" />
 <link type="text/css" href="css/scribbles.css" rel="stylesheet" />
 
-<title>circumscrible - HTML5 3D CANVAS drawing</title>
+<title>Scribbeats</title>
 
 <script src="js/ge1doot.js"></script>
 <script type="text/javascript" src="js/LZWEncoder.js"></script> 
@@ -469,23 +469,29 @@
 </head>
 <body>
 
-<div class="offright">
-	<canvas id="screen">HTML5 CANVAS 3D Drawing demo</canvas>
-</div>
-
 <div class="container">
     <div id="apiswf"></div>
     <div id="song-table"></div>
 
-	<div class="well">
+	<div id="header">
 
-		<div id="art_search">
+		<img src="img/scribbeatslogo.jpg" alt="the logo for scribbeats" />
+
+		<input title="Enter an artist name" type="text"  id="artist_name" class="tip" onclick="searchClicked()" onkeydown="if (event.keyCode == 13) newArtist()" name="artist" value='Enter artist name'/>
+		<button id="searchartist" onclick="newArtist()">GO</button>
+
+<!-- 		<div id="art_search">
 			<input title="Enter an artist name" type="text"  id="artist_name" class="tip" onclick="searchClicked()" onkeydown="if (event.keyCode == 13) newArtist()" name="artist" value='Enter artist name'/>
+			<button id="searchartist" onclick="newArtist()">GO</button>
+	    </div> -->
 
-		    <div id="album-art" >
-		    <!-- title="visit this album at Rdio">  -->
-		        <img width="200px" height="200px" alt="masks" src="img/scribbeats.png"/> 
-		    </div>
+	    <div class="pace">
+	        <img class="mbutton" id="chill" src="img/chill.png" title="immediately plays a chilled out song by the current artist">
+	        <p>chillaxed</p>
+	    </div>
+	    <div class="pace">
+	        <img class="mbutton" id="upbeat" src="img/upbeat.png" title="plays a high energy song by the current artist">
+	        <p>upbeat</p>
 	    </div>
 
 	    <div id="controls">
@@ -496,33 +502,35 @@
 	            <a title="advance to the next track"  id="next" class="button tip">
 	            	<img src="img/skip.png" alt="play music">
 	            </a>
-	            <a class="tip" title="mutes/unmutes the music" id="mute"> 
+	            <a class="tip" title="mutes/unmute the music" id="mute"> 
 	            	<img alt="mute" id="mute_img" src="img/sound.png"/>
 	            </a>
 	        </div>
 	    </div>
-    	<div id="audio-footer">
-        	<div id="audio-info">
-	            <div class="limited-label" title="visit this song at Rdio" id="song-title"> </div>
-	            <div class="limited-label" title="visit this artist at Rdio" id="artist-name"> </div>
-	        </div>
-            <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
+
+	</div>
+
+
+
+	<div id="audio-footer">
+		<div id="album-art" >
+	        <img width="200px" height="200px" alt="masks" src="img/scribbeats.png"/> 
+	    </div>
+	    <div id="art-search"></div>
+    	<div id="audio-info">
+            <div class="limited-label" id="song-title"> </div>
+            <div class="limited-label" id="artist-name"> </div>
         </div>
+        <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
+    </div>
 
-        <div class="pace">
-	        <img class="mbutton" id="chill" src="img/chill.png" title="immediately plays a chill out song by the current artist">
-	        <p>chillaxed</p>
-	    </div>
-	    <div class="pace">
-	        <img class="mbutton" id="upbeat" src="img/upbeat.png" title="plays a high energy song by the current artist">
-	        <p>upbeat</p>
-	    </div>
 
-        <div id="log">
-	        <noscript> Sorry! The Bipolar Radio needs JavaScript, but that is not
-	                   enabled in your browser.
-	        </noscript>
-	    </div>
+
+    <div id="log">
+        <noscript> Sorry! The Bipolar Radio needs JavaScript, but that is not
+                   enabled in your browser.
+        </noscript>
+    </div>
 
 <!-- 		<div id="directions">
 			<button id="clickme">Click meh</button>
@@ -593,6 +601,10 @@
 			</form>
 		</div>
 	</div>
+</div>
+
+<div class="offright">
+	<canvas id="screen">HTML5 CANVAS 3D Drawing demo</canvas>
 </div>
 
 
